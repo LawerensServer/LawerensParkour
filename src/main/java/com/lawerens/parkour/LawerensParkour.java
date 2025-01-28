@@ -1,14 +1,12 @@
 package com.lawerens.parkour;
 
-import com.lawerens.parkour.commands.EventCommand;
+import com.lawerens.events.LawerensEvent;
+import com.lawerens.events.LawerensEvents;
 import com.lawerens.parkour.commands.EventSetupCommand;
 import com.lawerens.parkour.listeners.GameListener;
 import com.lawerens.parkour.listeners.PreGameListener;
 import com.lawerens.parkour.listeners.QuitListener;
-import com.lawerens.parkour.model.GameManager;
-import com.lawerens.parkour.model.ParkourConfig;
-import com.lawerens.parkour.model.ParkourInfo;
-import com.lawerens.parkour.model.Rollback;
+import com.lawerens.parkour.model.*;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,7 +19,7 @@ import java.util.UUID;
 import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
 
 @Getter
-public final class LawerensParkour extends JavaPlugin {
+public final class LawerensParkour extends JavaPlugin implements LawerensEvent {
 
     private static LawerensParkour INSTANCE;
     private ParkourInfo parkourInfo;
@@ -46,8 +44,7 @@ public final class LawerensParkour extends JavaPlugin {
         parkourConfig.registerConfig();
         parkourConfig.load();
 
-        getCommand("lesetup").setExecutor(new EventSetupCommand());
-        getCommand("evento").setExecutor(new EventCommand());
+        getCommand("lpsetup").setExecutor(new EventSetupCommand());
 
         getServer().getPluginManager().registerEvents(new PreGameListener(), this);
         getServer().getPluginManager().registerEvents(new GameListener(), this);
@@ -72,5 +69,75 @@ public final class LawerensParkour extends JavaPlugin {
 
             }
         });
+    }
+
+    @Override
+    public String getEventName() {
+        return "Parkour";
+    }
+
+    @Override
+    public void start() {
+        if(LawerensParkour.get().getParkourInfo().getFinishMaterial() == null || LawerensParkour.get().getParkourInfo().getStartLocation() == null || LawerensParkour.get().getParkourInfo().getLobbyLocation() == null){
+            return;
+        }
+
+        if(LawerensParkour.get().getGameManager().getState() != ParkourState.WAITING || LawerensParkour.get().getGameManager().isEnable()){
+            return;
+        }
+        LawerensParkour.get().getGameManager().setEnable(true);
+    }
+
+    @Override
+    public void finish() {
+        if(!LawerensParkour.get().getGameManager().isEnable() || getGameManager().getState() != ParkourState.INGAME) return;
+
+        getGameManager().finish();
+    }
+
+    @Override
+    public void join(Player player) {
+        if(!LawerensParkour.get().getGameManager().isEnable()){
+            sendMessageWithPrefix(player, "EVENTO", "&cEl evento de parkour no está activado.");
+            return;
+        }
+        if(LawerensParkour.get().getGameManager().getState() != ParkourState.WAITING){
+            sendMessageWithPrefix(player, "EVENTO", "&c¡El evento está en juego!");
+            return;
+        }
+        if(LawerensParkour.get().getGameManager().getPlayers().size() == 35){
+            sendMessageWithPrefix(player, "EVENTO", "&cEl evento ya está lleno.");
+            return;
+        }
+
+        if(LawerensParkour.get().getGameManager().getPlayers().contains((Player) player)){
+            sendMessageWithPrefix(player, "EVENTO", "&cYa estás en el evento.");
+            return;
+        }
+
+        LawerensParkour.get().getGameManager().join(player);
+        sendMessageWithPrefix(player, "EVENTO", "&f¡Sé bienvenido al evento!");
+    }
+
+    @Override
+    public void leave(Player player) {
+        if(!LawerensParkour.get().getGameManager().isEnable()){
+            sendMessageWithPrefix(player, "EVENTO", "&cEl evento de parkour no está activado.");
+            return;
+        }
+
+        if(!LawerensParkour.get().getGameManager().getPlayers().contains(player)){
+            sendMessageWithPrefix(player, "EVENTO", "&cNo estás en el evento.");
+            return;
+        }
+
+        getRollbacks().get(player.getUniqueId()).give(true);
+        getRollbacks().remove(player.getUniqueId());
+        sendMessageWithPrefix(player, "EVENTO", "&fHas salido del evento Parkour.");
+    }
+
+    @Override
+    public boolean isStarted() {
+        return getGameManager().isEnable();
     }
 }

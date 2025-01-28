@@ -1,5 +1,7 @@
 package com.lawerens.parkour.commands;
 
+import com.lawerens.events.LawerensEvent;
+import com.lawerens.events.LawerensEvents;
 import com.lawerens.parkour.LawerensParkour;
 import com.lawerens.parkour.model.ParkourState;
 import org.bukkit.Bukkit;
@@ -43,7 +45,7 @@ public class EventSetupCommand implements CommandExecutor {
                 return false;
             }
             LawerensParkour.get().getGameManager().setEnable(true, sender);
-
+            LawerensEvents.getPlugin(LawerensEvents.class).setEvent(LawerensParkour.get());
         }
         else if(args[0].equalsIgnoreCase("start")){
             if(LawerensParkour.get().getGameManager().getState() != ParkourState.WAITING){
@@ -57,7 +59,7 @@ public class EventSetupCommand implements CommandExecutor {
             LawerensParkour.get().getGameManager().start();
         }
         else if(args[0].equalsIgnoreCase("stop")){
-            if(LawerensParkour.get().getGameManager().getState() == ParkourState.WAITING){
+            if(LawerensParkour.get().getGameManager().getState() != ParkourState.INGAME){
                 sendMessageWithPrefix(sender, "EVENTO", "&cEl evento no ha iniciado.");
                 return false;
             }

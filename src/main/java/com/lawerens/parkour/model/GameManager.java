@@ -196,9 +196,8 @@ public class GameManager {
 
     public void finish() {
         for (Player player : players) {
-            LawerensParkour.get().getRollbacks().get(player.getUniqueId()).give(false);
+            LawerensParkour.get().getRollbacks().get(player.getUniqueId()).give(true);
             LawerensParkour.get().getRollbacks().remove(player.getUniqueId());
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn "+player.getName());
             sendMessageWithPrefix(player, "EVENTO", "&f¡El evento ha finalizado! Nos vemos pronto...");
         }
         players.clear();
