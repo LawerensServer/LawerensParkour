@@ -1,0 +1,173 @@
+package com.lawerens.parkour.model;
+
+import com.lawerens.parkour.LawerensParkour;
+import lombok.Data;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
+import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
+
+@Data
+public class GameManager {
+
+    private boolean enable = false;
+    private final List<Player> players = new ArrayList<>();
+    private int countdown = 90;
+    private ParkourState state = ParkourState.WAITING;
+    private int taskID = -1;
+
+    public void scheduler(){
+        taskID = Bukkit.getScheduler().runTaskTimer(LawerensParkour.get(), () -> {
+            if(players.isEmpty() && countdown != 90){
+                countdown = 90;
+            }
+
+            if(players.size() > 10){
+                countdown = 15;
+            }
+
+            if (!players.isEmpty()) {
+                if (countdown <= 0) {
+                    start();
+                    cancelTask();
+                }
+
+                if (countdown % 30 == 0 || countdown <= 5) {
+                    for (Player player : players) {
+                        sendMessageWithPrefix(player, "EVENTO", "&fEmpezando en &e" + countdown + " &fsegundos.");
+                    }
+                }
+                countdown--;
+            }
+        }, 20L, 20L).getTaskId();
+    }
+
+    public void setEnable(boolean enable) {
+        if(enable) scheduler();
+        this.enable = enable;
+    }
+
+    public void start() {
+        state = ParkourState.INGAME;
+        for (Player player : getPlayers()) {
+            player.teleport(LawerensParkour.get().getParkourInfo().getStartLocation());
+            sendMessageWithPrefix(player, "EVENTO", "&f¡El evento de parkour ha comenzado!");
+            player.playSound(player, Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
+
+            Audience.audience(player).showTitle(Title.title(
+                    Component.text("¡A CORRER!")
+                            .color(TextColor.fromHexString("#00ff00"))
+                            .decorate(TextDecoration.BOLD),
+                    Component.text("El evento ha comenzado")
+                            .color(TextColor.color(0xffffff)),
+                    Title.Times.times(Duration.ZERO, Duration.ofSeconds(2), Duration.ZERO)
+            ));
+        }
+    }
+
+    public void cancelTask(){
+        Bukkit.getScheduler().cancelTask(taskID);
+    }
+
+    public void win(@NotNull Player player) {
+        state = ParkourState.FINISHING;
+        for (Player p : getPlayers()) {
+            sendMessageWithPrefix(p, "EVENTO", "&f¡&e"+player.getName()+"&f ha ganado el evento!");
+            p.playSound(p, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 1.5f);
+
+            Audience.audience(p).showTitle(Title.title(
+                    Component.text("¡EVENTO TERMINADO!")
+                            .color(TextColor.fromHexString("#00ff00"))
+                            .decorate(TextDecoration.BOLD),
+                    Component.text("¡")
+                            .color(TextColor.color(0xffffff))
+                            .append(Component.text(player.getName())
+                                    .color(TextColor.color(0xffff00)))
+                            .append(Component.text(" ha ganado el evento!")
+                                    .color(TextColor.color(0xffffff))),
+                    Title.Times.times(Duration.ZERO, Duration.ofSeconds(5), Duration.ZERO)
+            ));
+        }
+        finish();
+        new BukkitRunnable() {
+            int i = 9;
+            @Override
+            public void run() {
+                if(i == 2) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "crates key give "+player.getName()+" epica 1");
+                if(i < 0) {
+                    cancel();
+                    return;
+                }
+                Firework firework = player.getWorld().spawn(player.getLocation(), Firework.class);
+
+                FireworkMeta fireworkMeta = firework.getFireworkMeta();
+
+                FireworkEffect effect = FireworkEffect.builder()
+                        .withColor(Color.RED)
+                        .withFade(Color.YELLOW)
+                        .with(FireworkEffect.Type.BALL)
+                        .trail(true)
+                        .flicker(true)
+                        .build();
+
+                fireworkMeta.addEffect(effect);
+
+                fireworkMeta.setPower(2);
+
+                firework.setFireworkMeta(fireworkMeta);
+                i--;
+            }
+        }.runTaskTimer(LawerensParkour.get(), 0L, 20L);
+    }
+
+    public void finish() {
+        for (Player player : players) {
+            LawerensParkour.get().getRollbacks().get(player.getUniqueId()).give(false);
+            LawerensParkour.get().getRollbacks().remove(player.getUniqueId());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawn "+player.getName());
+            sendMessageWithPrefix(player, "EVENTO", "&f¡El evento ha finalizado! Nos vemos pronto...");
+        }
+        players.clear();
+        state = ParkourState.WAITING;
+        enable = false;
+        countdown = 90;
+        taskID = -1;
+    }
+
+    public void join(Player player) {
+        players.add(player);
+
+        Rollback rollback = new Rollback(player);
+        LawerensParkour.get().getRollbacks().put(player.getUniqueId(), rollback);
+
+        player.setGameMode(GameMode.ADVENTURE);
+        player.teleport(LawerensParkour.get().getParkourInfo().getLobbyLocation());
+        player.clearActivePotionEffects();
+        player.setHealth(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue());
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
+        player.setFoodLevel(24);
+        player.setFlying(false);
+        player.setAllowFlight(false);
+
+        for (Player p : players) {
+            sendMessageWithPrefix(p, "EVENTO", "&e" + player.getName() + " &fse ha unido. &f(&e" + players.size() + "&f/&e30&f)");
+            p.playSound(p, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 0.8f);
+        }
+    }
+}

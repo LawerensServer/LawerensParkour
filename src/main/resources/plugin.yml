@@ -1,0 +1,8 @@
+name: LawerensParkour
+version: '1.0'
+main: com.lawerens.parkour.LawerensParkour
+api-version: '1.20'
+commands:
+  evento:
+    aliases: [event]
+  lesetup:
