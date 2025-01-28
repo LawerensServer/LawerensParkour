@@ -42,15 +42,8 @@ public class EventSetupCommand implements CommandExecutor {
                 sendMessageWithPrefix(sender, "EVENTO", "&cEl evento está activado.");
                 return false;
             }
-            LawerensParkour.get().getGameManager().setEnable(true);
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                sendUnderline(p, "#00ff00");
-                sendMessage(p, " ");
-                sendCenteredMessage(p, "&f¡El Evento &aParkour&f ha empezado!");
-                sendCenteredMessage(p, "&f¡Usa &e/evento&f para unirte!");
-                sendMessage(p, " ");
-                sendUnderline(p, "#00ff00");
-            }
+            LawerensParkour.get().getGameManager().setEnable(true, sender);
+
         }
         else if(args[0].equalsIgnoreCase("start")){
             if(LawerensParkour.get().getGameManager().getState() != ParkourState.WAITING){
@@ -68,30 +61,15 @@ public class EventSetupCommand implements CommandExecutor {
                 sendMessageWithPrefix(sender, "EVENTO", "&cEl evento no ha iniciado.");
                 return false;
             }
-            LawerensParkour.get().getGameManager().finish();
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                sendUnderline(p, "#cf0011");
-                sendMessage(p, " ");
-                sendCenteredMessage(p, "&fEl Evento &cParkour&f se detuvo forzadamente");
-                sendCenteredMessage(p, "&fpor: &c"+sender.getName()+".");
-                sendMessage(p, " ");
-                sendUnderline(p, "#cf0011");
-            }
+            LawerensParkour.get().getGameManager().finish(sender);
         }
         else if(args[0].equalsIgnoreCase("disable")){
             if(LawerensParkour.get().getGameManager().getState() != ParkourState.WAITING){
                 sendMessageWithPrefix(sender, "EVENTO", "&cEl evento ya inició. &fUsa &e/lesetup stop&f para detenerlo.");
                 return false;
             }
-            LawerensParkour.get().getGameManager().setEnable(true);
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                sendUnderline(p, '6');
-                sendMessage(p, " ");
-                sendCenteredMessage(p, "&6¡El Evento &eParkour&6 ha sido deshabilitado");
-                sendCenteredMessage(p, "&6por: &c"+sender.getName()+"&f!");
-                sendMessage(p, " ");
-                sendUnderline(p, '6');
-            }
+            LawerensParkour.get().getGameManager().setEnable(false, sender);
+
         }
         else if (args[0].equalsIgnoreCase("setmaterialfinish")) {
             if (args.length < 2) return false;

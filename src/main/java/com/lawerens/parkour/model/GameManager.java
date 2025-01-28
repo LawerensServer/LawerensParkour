@@ -4,11 +4,15 @@ import com.lawerens.parkour.LawerensParkour;
 import lombok.Data;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -21,6 +25,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
+import static xyz.lawerens.utils.LawerensUtils.*;
+import static xyz.lawerens.utils.LawerensUtils.sendUnderline;
 
 @Data
 public class GameManager {
@@ -58,7 +64,60 @@ public class GameManager {
     }
 
     public void setEnable(boolean enable) {
-        if(enable) scheduler();
+        if(enable){
+            scheduler();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                sendUnderline(p, "#00ff00");
+                sendMessage(p, " ");
+                sendCenteredMessage(p, "&f¡El Evento &aParkour&f ha empezado!");
+                p.sendMessage(
+                        Component.text("             ¡HAS CLICK AQUÍ PARA UNIRTE!")
+                                .color(TextColor.color(0x11f111))
+                                .decorate(TextDecoration.BOLD)
+                                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/evento"))
+                                .hoverEvent(HoverEvent.showText(Component.text("Click para ir al evento.").color(TextColor.color(0xff8000))))
+                );                sendMessage(p, " ");
+                sendUnderline(p, "#00ff00");
+            }
+        }else{
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                sendUnderline(p, '6');
+                sendMessage(p, " ");
+                sendCenteredMessage(p, "&6¡El Evento &eParkour&6 ha sido deshabilitado!");
+                sendMessage(p, " ");
+                sendUnderline(p, '6');
+            }
+        }
+        this.enable = enable;
+    }
+
+    public void setEnable(boolean enable, CommandSender sender) {
+        if(enable){
+            scheduler();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                sendUnderline(p, "#00ff00");
+                sendMessage(p, " ");
+                sendCenteredMessage(p, "&f¡El Evento &aParkour&f ha empezado!");
+                p.sendMessage(
+                        Component.text("             ¡HAS CLICK AQUÍ PARA UNIRTE!")
+                                .color(TextColor.color(0x11f111))
+                                .decorate(TextDecoration.BOLD)
+                                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/evento"))
+                                .hoverEvent(HoverEvent.showText(Component.text("Click para ir al evento.").color(TextColor.color(0xff8000))))
+                );
+                sendMessage(p, " ");
+                sendUnderline(p, "#00ff00");
+            }
+        }else{
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                sendUnderline(p, '6');
+                sendMessage(p, " ");
+                sendCenteredMessage(p, "&6¡El Evento &eParkour&6 ha sido deshabilitado");
+                sendCenteredMessage(p, "&6por: &c"+sender.getName()+"&f!");
+                sendMessage(p, " ");
+                sendUnderline(p, '6');
+            }
+        }
         this.enable = enable;
     }
 
@@ -168,6 +227,18 @@ public class GameManager {
         for (Player p : players) {
             sendMessageWithPrefix(p, "EVENTO", "&e" + player.getName() + " &fse ha unido. &f(&e" + players.size() + "&f/&e30&f)");
             p.playSound(p, Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 0.8f);
+        }
+    }
+
+    public void finish(@NotNull CommandSender sender) {
+        finish();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            sendUnderline(p, "#cf0011");
+            sendMessage(p, " ");
+            sendCenteredMessage(p, "&fEl Evento &cParkour&f se detuvo forzadamente");
+            sendCenteredMessage(p, "&fpor: &c"+sender.getName()+".");
+            sendMessage(p, " ");
+            sendUnderline(p, "#cf0011");
         }
     }
 }

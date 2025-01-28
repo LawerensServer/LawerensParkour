@@ -3,11 +3,13 @@ package com.lawerens.parkour.listeners;
 import com.lawerens.parkour.LawerensParkour;
 import com.lawerens.parkour.model.ParkourState;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import static com.lawerens.parkour.LawerensParkour.checkPlayer;
+import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
 
 public class GameListener implements Listener {
 
@@ -21,6 +23,8 @@ public class GameListener implements Listener {
             }
             if (e.getTo().getWorld().getBlockAt(e.getTo().getBlockX(), e.getTo().getBlockY(), e.getTo().getBlockZ()).getType() == Material.WATER) {
                 e.setTo(LawerensParkour.get().getParkourInfo().getStartLocation());
+                e.getPlayer().playSound(e.getPlayer(), Sound.BLOCK_NOTE_BLOCK_PLING, 1f, 0.6f);
+                sendMessageWithPrefix(e.getPlayer(), "EVENTO", "&f¡Has caído, has vuelto atrás!");
             }
         }
     }

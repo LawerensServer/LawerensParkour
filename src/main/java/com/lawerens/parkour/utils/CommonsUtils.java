@@ -5,6 +5,10 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
+import xyz.lawerens.utils.DefaultFontInfo;
+import xyz.lawerens.utils.LawerensUtils;
+
+import java.awt.*;
 
 import static xyz.lawerens.Lawerens.COLOR;
 import static xyz.lawerens.utils.LawerensUtils.sendMessage;
