@@ -71,8 +71,9 @@ public class EventSetupCommand implements CommandExecutor {
                 sendMessageWithPrefix(sender, "EVENTO", "&cEl evento ya inició. &fUsa &e/lesetup stop&f para detenerlo.");
                 return false;
             }
-            LawerensParkour.get().getGameManager().setEnable(false, sender);
 
+            LawerensParkour.get().getGameManager().setEnable(false, sender);
+            LawerensParkour.get().getGameManager().finish();
         }
         else if (args[0].equalsIgnoreCase("setmaterialfinish")) {
             if (args.length < 2) return false;

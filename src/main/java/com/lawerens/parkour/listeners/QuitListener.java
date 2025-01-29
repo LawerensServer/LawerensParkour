@@ -16,6 +16,8 @@ public class QuitListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e){
+        LawerensParkour.get().leave(e.getPlayer());
+        /*
         if(LawerensParkour.get().getRollbacks().containsKey(e.getPlayer().getUniqueId())){
             LawerensParkour.get().getRollbacks().get(e.getPlayer().getUniqueId()).give(true);
             LawerensParkour.get().getRollbacks().remove(e.getPlayer().getUniqueId());
@@ -40,5 +42,6 @@ public class QuitListener implements Listener {
                         " &fha salido. &f(&e"+LawerensParkour.get().getGameManager().getPlayers().size()+"&f/&e30&f)");
 
         }
+        */
     }
 }

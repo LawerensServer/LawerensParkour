@@ -52,8 +52,15 @@ public class GameManager {
 
             if (!players.isEmpty()) {
                 if (countdown <= 0) {
-                    start();
-                    cancelTask();
+                    if (players.size() > 2){
+                        start();
+                        cancelTask();
+                    }else {
+                        countdown = 90;
+                        for (Player player : players) {
+                            sendMessageWithPrefix(player, "EVENTO", "&fEl evento no cuenta con el mínimo de jugadores (&e3&f). Reiniciando....");
+                        }
+                    }
                     return;
                 }
 
@@ -62,6 +69,7 @@ public class GameManager {
                         sendMessageWithPrefix(player, "EVENTO", "&fEmpezando en &e" + countdown + " &fsegundos.");
                     }
                 }
+
                 countdown--;
             }
         }, 20L, 20L).getTaskId();
