@@ -10,13 +10,17 @@ import com.lawerens.parkour.model.*;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
+import static xyz.lawerens.utils.LawerensUtils.*;
+import static xyz.lawerens.utils.LawerensUtils.sendUnderline;
 
 @Getter
 public final class LawerensParkour extends JavaPlugin implements LawerensEvent {
@@ -79,6 +83,11 @@ public final class LawerensParkour extends JavaPlugin implements LawerensEvent {
     }
 
     @Override
+    public @NotNull Plugin getPlugin() {
+        return this;
+    }
+
+    @Override
     public void start() {
         if(LawerensParkour.get().getParkourInfo().getFinishMaterial() == null || LawerensParkour.get().getParkourInfo().getStartLocation() == null || LawerensParkour.get().getParkourInfo().getLobbyLocation() == null){
             return;
@@ -107,7 +116,7 @@ public final class LawerensParkour extends JavaPlugin implements LawerensEvent {
             sendMessageWithPrefix(player, "EVENTO", "&c¡El evento está en juego!");
             return;
         }
-        if(LawerensParkour.get().getGameManager().getPlayers().size() == 35){
+        if(LawerensParkour.get().getGameManager().getPlayers().size() == 30){
             sendMessageWithPrefix(player, "EVENTO", "&cEl evento ya está lleno.");
             return;
         }
@@ -135,7 +144,25 @@ public final class LawerensParkour extends JavaPlugin implements LawerensEvent {
 
         getRollbacks().get(player.getUniqueId()).give(true);
         getRollbacks().remove(player.getUniqueId());
+        LawerensParkour.get().getGameManager().getPlayers().remove(player);
+
         sendMessageWithPrefix(player, "EVENTO", "&fHas salido del evento Parkour.");
+        if(LawerensParkour.get().getGameManager().getState() == ParkourState.INGAME && LawerensParkour.get().getGameManager().getPlayers().isEmpty()){
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                sendUnderline(p, "#cf0011");
+                sendMessage(p, " ");
+                sendCenteredMessage(p, "&fEl Evento &cParkour&f se detuvo");
+                sendCenteredMessage(p, "&fDebido a que todos los jugadores han salido.");
+                sendMessage(p, " ");
+                sendUnderline(p, "#cf0011");
+            }
+            LawerensParkour.get().getGameManager().finish();
+            return;
+        }
+        for (Player online : LawerensParkour.get().getGameManager().getPlayers())
+            sendMessageWithPrefix(online, "EVENTO", "&e"+player.getName()+
+                    " &fha salido. &f(&e"+LawerensParkour.get().getGameManager().getPlayers().size()+"&f/&e30&f)");
+
     }
 
     @Override

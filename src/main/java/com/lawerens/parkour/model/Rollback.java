@@ -46,6 +46,8 @@ public class Rollback {
         player.getInventory().setContents(contents);
         player.getInventory().setHelmet(helmet);
         player.getInventory().setChestplate(chestplate);
+        player.clearActivePotionEffects();
+
         for (PotionEffect effect : effects) {
             player.addPotionEffect(effect);
         }

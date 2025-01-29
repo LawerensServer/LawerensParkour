@@ -16,6 +16,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -127,8 +129,10 @@ public class GameManager {
         state = ParkourState.INGAME;
         for (Player player : getPlayers()) {
             player.teleport(LawerensParkour.get().getParkourInfo().getStartLocation());
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999999, 1, false, false, false));
+
             sendMessageWithPrefix(player, "EVENTO", "&f¡El evento de parkour ha comenzado!");
-            player.playSound(player, Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
+            player.playSound(player, Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 0.8f);
 
             Audience.audience(player).showTitle(Title.title(
                     Component.text("¡A CORRER!")
