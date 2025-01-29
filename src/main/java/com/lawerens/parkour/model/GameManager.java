@@ -38,8 +38,9 @@ public class GameManager {
     private int taskID = -1;
 
     public void scheduler(){
+        countdown = 90;
         taskID = Bukkit.getScheduler().runTaskTimer(LawerensParkour.get(), () -> {
-            if(players.isEmpty() && countdown != 90){
+            if(players.isEmpty() && countdown < 90){
                 countdown = 90;
             }
 
@@ -51,9 +52,10 @@ public class GameManager {
                 if (countdown <= 0) {
                     start();
                     cancelTask();
+                    return;
                 }
 
-                if (countdown % 30 == 0 || countdown <= 5) {
+                if (countdown % 30 == 0) {
                     for (Player player : players) {
                         sendMessageWithPrefix(player, "EVENTO", "&fEmpezando en &e" + countdown + " &fsegundos.");
                     }
@@ -141,6 +143,7 @@ public class GameManager {
 
     public void cancelTask(){
         Bukkit.getScheduler().cancelTask(taskID);
+        taskID = -1;
     }
 
     public void win(@NotNull Player player) {
@@ -204,7 +207,7 @@ public class GameManager {
         state = ParkourState.WAITING;
         enable = false;
         countdown = 90;
-        taskID = -1;
+
     }
 
     public void join(Player player) {

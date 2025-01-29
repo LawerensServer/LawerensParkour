@@ -57,6 +57,7 @@ public class EventSetupCommand implements CommandExecutor {
                 return false;
             }
             LawerensParkour.get().getGameManager().start();
+            LawerensParkour.get().getGameManager().cancelTask();
         }
         else if(args[0].equalsIgnoreCase("stop")){
             if(LawerensParkour.get().getGameManager().getState() != ParkourState.INGAME){

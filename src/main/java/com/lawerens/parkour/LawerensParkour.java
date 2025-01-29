@@ -51,6 +51,8 @@ public final class LawerensParkour extends JavaPlugin implements LawerensEvent {
         getServer().getPluginManager().registerEvents(new QuitListener(), this);
 
         gameManager = new GameManager();
+
+        LawerensEvents.getPlugin(LawerensEvents.class).registerEvent(this);
     }
 
     public static boolean checkPlayer(Player player){
