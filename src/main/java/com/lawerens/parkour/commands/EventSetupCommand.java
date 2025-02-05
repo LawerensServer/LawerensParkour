@@ -12,9 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
-import static xyz.lawerens.utils.LawerensUtils.*;
-import static xyz.lawerens.utils.LawerensUtils.sendUnderline;
+import static com.lawerens.core.LawerensUtils.sendMessageWithPrefix;
+
 
 public class EventSetupCommand implements CommandExecutor {
     @Override

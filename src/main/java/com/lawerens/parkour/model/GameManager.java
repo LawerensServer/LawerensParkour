@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
-import static xyz.lawerens.utils.LawerensUtils.*;
-import static xyz.lawerens.utils.LawerensUtils.sendUnderline;
+import static com.lawerens.core.LawerensUtils.*;
 
 @Data
 public class GameManager {

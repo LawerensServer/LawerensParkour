@@ -8,8 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import static com.lawerens.core.LawerensUtils.sendMessageWithPrefix;
 import static com.lawerens.parkour.LawerensParkour.checkPlayer;
-import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
 
 public class GameListener implements Listener {
 

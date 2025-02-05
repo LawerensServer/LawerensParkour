@@ -8,10 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import static com.lawerens.parkour.LawerensParkour.checkPlayer;
-import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
-import static xyz.lawerens.utils.LawerensUtils.*;
-
 public class QuitListener implements Listener {
 
     @EventHandler

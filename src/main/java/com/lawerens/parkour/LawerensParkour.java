@@ -18,9 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.lawerens.parkour.utils.CommonsUtils.sendMessageWithPrefix;
-import static xyz.lawerens.utils.LawerensUtils.*;
-import static xyz.lawerens.utils.LawerensUtils.sendUnderline;
+import static com.lawerens.core.LawerensUtils.*;
 
 @Getter
 public final class LawerensParkour extends JavaPlugin implements LawerensEvent {

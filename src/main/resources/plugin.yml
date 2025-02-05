@@ -4,5 +4,6 @@ main: com.lawerens.parkour.LawerensParkour
 api-version: '1.20'
 depend:
   - LawerensEvents
+  - LawerensCore
 commands:
   lpsetup:
